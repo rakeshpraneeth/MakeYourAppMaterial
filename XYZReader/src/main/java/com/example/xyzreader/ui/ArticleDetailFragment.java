@@ -12,6 +12,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.ShareCompat;
 import android.support.v7.graphics.Palette;
+import android.support.v7.widget.AppCompatButton;
 import android.text.Html;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
@@ -38,7 +39,7 @@ import java.util.GregorianCalendar;
  * tablets) or a {@link ArticleDetailActivity} on handsets.
  */
 public class ArticleDetailFragment extends Fragment implements
-        LoaderManager.LoaderCallbacks<Cursor> {
+        LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
     private static final String TAG = "ArticleDetailFragment";
 
     public static final String ARG_ITEM_ID = "item_id";
@@ -58,6 +59,10 @@ public class ArticleDetailFragment extends Fragment implements
     private int mScrollY;
     private boolean mIsCard = false;
     private int mStatusBarFullOpacityBottom;
+    private AppCompatButton mReadMoreBtn;
+    private String mArticleBodyData;
+    private int mBodyInitialLength = 500;
+    private TextView mBodyView;
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
     // Use default locale format
@@ -114,6 +119,7 @@ public class ArticleDetailFragment extends Fragment implements
             Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_article_detail, container, false);
         mDrawInsetsFrameLayout = mRootView.findViewById(R.id.draw_insets_frame_layout);
+
         mDrawInsetsFrameLayout.setOnInsetsCallback(new DrawInsetsFrameLayout.OnInsetsCallback() {
             @Override
             public void onInsetsChanged(Rect insets) {
@@ -201,7 +207,10 @@ public class ArticleDetailFragment extends Fragment implements
         TextView bylineView = mRootView.findViewById(R.id.article_byline);
         TextView authorView = mRootView.findViewById(R.id.article_author);
         bylineView.setMovementMethod(new LinkMovementMethod());
-        TextView bodyView = mRootView.findViewById(R.id.article_body);
+        mBodyView= mRootView.findViewById(R.id.article_body);
+        mReadMoreBtn = mRootView.findViewById(R.id.read_more);
+        mReadMoreBtn.setOnClickListener(this);
+
 
         if (mCursor != null) {
             mRootView.setAlpha(0);
@@ -226,7 +235,12 @@ public class ArticleDetailFragment extends Fragment implements
                 authorView.setText("by "+mCursor.getString(ArticleLoader.Query.AUTHOR));
 
             }
-            bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY).replaceAll("(\r\n|\n)", "<br />")));
+            mArticleBodyData = mCursor.getString(ArticleLoader.Query.BODY);
+
+            mBodyView.setText(Html.fromHtml(mArticleBodyData.substring(0, mBodyInitialLength).replaceAll("(\r\n|\n)", "<br />")));
+            if(mArticleBodyData.length() > mBodyInitialLength){
+                mReadMoreBtn.setVisibility(View.VISIBLE);
+            }
             ImageLoaderHelper.getInstance(getActivity()).getImageLoader()
                     .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
                         @Override
@@ -251,7 +265,7 @@ public class ArticleDetailFragment extends Fragment implements
             mRootView.setVisibility(View.GONE);
             titleView.setText("N/A");
             bylineView.setText("N/A" );
-            bodyView.setText("N/A");
+            mBodyView.setText("N/A");
         }
     }
 
@@ -294,5 +308,15 @@ public class ArticleDetailFragment extends Fragment implements
         return mIsCard
                 ? (int) mPhotoContainerView.getTranslationY() + mPhotoView.getHeight() - mScrollY
                 : mPhotoView.getHeight() - mScrollY;
+    }
+
+    @Override
+    public void onClick(View view) {
+        if(view.getId() == R.id.read_more){
+            if(mArticleBodyData !=null && !mArticleBodyData.isEmpty() && mArticleBodyData.length() > mBodyInitialLength){
+                mBodyView.append(mArticleBodyData.substring(mBodyInitialLength, mArticleBodyData.length()).replaceAll("(\r\n|\n)", "<br />"));
+                mReadMoreBtn.setVisibility(View.GONE);
+            }
+        }
     }
 }

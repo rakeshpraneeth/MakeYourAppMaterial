@@ -14,4 +14,8 @@
 
     <dimen name="author_margin_start">5dp</dimen>
 
+    <dimen name="read_more_btn_margin_top">15dp</dimen>
+    <dimen name="read_more_top_bottom_padding">7dp</dimen>
+    <dimen name="read_more_side_padding">20dp</dimen>
+
 </resources>
