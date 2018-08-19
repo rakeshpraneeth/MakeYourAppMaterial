@@ -199,11 +199,9 @@ public class ArticleDetailFragment extends Fragment implements
 
         TextView titleView = mRootView.findViewById(R.id.article_title);
         TextView bylineView = mRootView.findViewById(R.id.article_byline);
+        TextView authorView = mRootView.findViewById(R.id.article_author);
         bylineView.setMovementMethod(new LinkMovementMethod());
         TextView bodyView = mRootView.findViewById(R.id.article_body);
-
-
-        //bodyView.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "font/rosario_regular.ttf"));
 
         if (mCursor != null) {
             mRootView.setAlpha(0);
@@ -216,17 +214,16 @@ public class ArticleDetailFragment extends Fragment implements
                         DateUtils.getRelativeTimeSpanString(
                                 publishedDate.getTime(),
                                 System.currentTimeMillis(), DateUtils.HOUR_IN_MILLIS,
-                                DateUtils.FORMAT_ABBREV_ALL).toString()
-                                + " by <font color='#ffffff'>"
-                                + mCursor.getString(ArticleLoader.Query.AUTHOR)
-                                + "</font>"));
+                                DateUtils.FORMAT_ABBREV_ALL).toString()));
+
+                authorView.setText("by "+mCursor.getString(ArticleLoader.Query.AUTHOR));
 
             } else {
                 // If date is before 1902, just show the string
                 bylineView.setText(Html.fromHtml(
-                        outputFormat.format(publishedDate) + " by <font color='#ffffff'>"
-                        + mCursor.getString(ArticleLoader.Query.AUTHOR)
-                                + "</font>"));
+                        outputFormat.format(publishedDate)));
+
+                authorView.setText("by "+mCursor.getString(ArticleLoader.Query.AUTHOR));
 
             }
             bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY).replaceAll("(\r\n|\n)", "<br />")));

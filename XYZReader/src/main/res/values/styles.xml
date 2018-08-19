@@ -39,4 +39,21 @@
         <item name="android:textColor">@android:color/black</item>
     </style>
 
+    <style name="articleDetailDateStyle" parent="@style/Base.TextAppearance.AppCompat.Small">
+        <item name="android:fontFamily">@font/rosario_regular</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="articleDetailAuthorStyle" parent="@style/Base.TextAppearance.AppCompat.Small">
+        <item name="android:fontFamily">@font/rosario_bolditalic</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="articleDetailBodyStyle" parent="@style/Base.TextAppearance.AppCompat.Medium">
+        <item name="android:fontFamily">@font/rosario_regular</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+
+
 </resources>
