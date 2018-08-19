@@ -37,7 +37,7 @@ import java.util.GregorianCalendar;
  * activity presents a grid of items as cards.
  */
 public class ArticleListActivity extends AppCompatActivity implements
-        LoaderManager.LoaderCallbacks<Cursor> {
+        LoaderManager.LoaderCallbacks<Cursor>, SwipeRefreshLayout.OnRefreshListener {
 
     private static final String TAG = ArticleListActivity.class.toString();
     private Toolbar mToolbar;
@@ -49,25 +49,30 @@ public class ArticleListActivity extends AppCompatActivity implements
     private SimpleDateFormat outputFormat = new SimpleDateFormat();
     // Most time functions can only handle 1902 - 2037
     private GregorianCalendar START_OF_EPOCH = new GregorianCalendar(2,1,1);
+    private boolean mIsRefreshing = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_list);
 
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar = findViewById(R.id.toolbar);
 
+        mSwipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
 
-        final View toolbarContainerView = findViewById(R.id.toolbar_container);
-
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
-
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        mRecyclerView = findViewById(R.id.recycler_view);
         getLoaderManager().initLoader(0, null, this);
 
         if (savedInstanceState == null) {
             refresh();
         }
+
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+    }
+
+    @Override
+    public void onRefresh() {
+        refresh();
     }
 
     private void refresh() {
@@ -87,7 +92,6 @@ public class ArticleListActivity extends AppCompatActivity implements
         unregisterReceiver(mRefreshingReceiver);
     }
 
-    private boolean mIsRefreshing = false;
 
     private BroadcastReceiver mRefreshingReceiver = new BroadcastReceiver() {
         @Override
@@ -100,6 +104,7 @@ public class ArticleListActivity extends AppCompatActivity implements
     };
 
     private void updateRefreshingUI() {
+        Log.i("rakesh","check"+mIsRefreshing);
         mSwipeRefreshLayout.setRefreshing(mIsRefreshing);
     }
 
@@ -201,9 +206,9 @@ public class ArticleListActivity extends AppCompatActivity implements
 
         public ViewHolder(View view) {
             super(view);
-            thumbnailView = (DynamicHeightNetworkImageView) view.findViewById(R.id.thumbnail);
-            titleView = (TextView) view.findViewById(R.id.article_title);
-            subtitleView = (TextView) view.findViewById(R.id.article_subtitle);
+            thumbnailView = view.findViewById(R.id.thumbnail);
+            titleView = view.findViewById(R.id.article_title);
+            subtitleView = view.findViewById(R.id.article_subtitle);
         }
     }
 }
