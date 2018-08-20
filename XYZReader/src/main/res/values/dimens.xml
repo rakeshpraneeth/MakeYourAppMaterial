@@ -11,6 +11,8 @@
     <dimen name="appbar_elevation">4dp</dimen>
 
     <dimen name="list_item_article_elevation">4dp</dimen>
+    <dimen name="article_detail_image_elevation">2dp</dimen>
+    <dimen name="article_detail_elevation">3dp</dimen>
 
     <dimen name="author_margin_start">5dp</dimen>
 
